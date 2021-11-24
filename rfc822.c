@@ -4,7 +4,7 @@
 #include <string.h>
 #include "rfc822.h"
 
-unsigned int atomize( const char *local, unsigned int len )
+unsigned int atomize( const char *local, unsigned long len )
 {
 	//rfc[02]822 shows email address as localpart "@" domain
 	//localpart consists of one or more words
@@ -79,7 +79,7 @@ void tokenize( const char *email, char **tok )
 	while(( *p != '@' ) && ( *p ))
 		p++;
 	p++;
-	tok[1] = p - email - 1;
+	tok[1] = (char *)(p - email - 1);
 	tok[2] = p;
 	tok[3] = 0;
 	while(*p)
@@ -113,13 +113,13 @@ int Validate( const char *email, unsigned int len )
 	}
 
 	tokenize( buf, tok );
-	status = atomize( tok[0], (unsigned int)tok[1] );
+	status = atomize( tok[0], (unsigned long)tok[1] );
 	if ( RFC822_INVALID == status )
 	{
 		free( buf );
 		return( RFC822_INVALID );
 	}
-	status = domaincheck( tok[2], (unsigned int)tok[3] );
+	status = domaincheck( tok[2], (unsigned long)tok[3] );
 	free( buf );
 	return( status );
 }
